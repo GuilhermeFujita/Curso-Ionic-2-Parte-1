@@ -8,8 +8,26 @@ import { NavParams } from 'ionic-angular';
 export class EscolhaPage {
 
     public carro;
+    public acessorios;
+    private _precoTotal: number;
 
     constructor(public navParams: NavParams) {
         this.carro = navParams.get('carroSelecionado');
+        this._precoTotal = this.carro.preco;
+        this.acessorios = [
+            {nome: 'Freio ABS', preco: 800},
+            {nome: 'Ar-Condicionado',  preco:1000},
+            {nome: 'MP3 Player', preco: 500}
+        ];
+    }
+
+    get precoTotal(){
+        return this._precoTotal;
+    }
+
+    atualizaTotal(ligado: boolean, acessorio){
+        ligado?
+        this._precoTotal += acessorio.preco :
+        this._precoTotal -= acessorio.preco;
     }
 }
