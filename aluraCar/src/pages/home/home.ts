@@ -4,13 +4,15 @@ import { Http } from '@angular/http';
 
 import { EscolhaPage} from '../escolha/escolha';
 
+import { Carro } from '../../domain/carro/carro';
+
 @Component({
 	selector: 'page-home',
 	templateUrl: 'home.html'
 })
 export class HomePage implements OnInit {
 
-	public carros;
+	public carros: Carro[];
 
 	constructor(public navCtrl: NavController,
 		private _http: Http,
