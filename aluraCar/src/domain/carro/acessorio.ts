@@ -1,4 +1,4 @@
-export class Acessorio{
+export class Acessorio {
 
-    constructor(public nome: string, public preco: number){}
+    constructor(public nome: string, public preco: number) {}
 }

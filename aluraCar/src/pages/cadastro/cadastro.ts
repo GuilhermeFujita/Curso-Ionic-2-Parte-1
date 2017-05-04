@@ -1,38 +1,59 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
-
+import { NavController, NavParams, AlertController, Alert } from 'ionic-angular';
 import { Carro } from '../../domain/carro/carro';
-
-import { Http } from '@angular/http';
+import { HomePage } from '../home/home';
+import { Agendamento } from '../../domain/agendamento/agendamento';
+import { AgendamentoService } from '../../domain/agendamento/agendamento-service';
 
 @Component({
-	templateUrl: 'cadastro.html'
+  templateUrl: 'cadastro.html'
 })
-
 export class CadastroPage {
 
-	public carro: Carro;
-	public precoTotal: number;
+  public carro: Carro;
+  public precoTotal: number;
+  public agendamento: Agendamento;
+  private _alerta: Alert;
+  
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams, 
+    private _service: AgendamentoService,
+    private _alertCtrl: AlertController) {
 
-	//Propriedades do Formulário
-	public nome: string;
-	public endereco: string;
-	public email: string;
-	public data: string = new Date().toISOString();
+    this.carro = this.navParams.get('carro');
+    this.precoTotal = this.navParams.get('precoTotal')
+    this.agendamento = new Agendamento(this.carro, this.precoTotal);
 
-	constructor(
-		public navCtrl: NavController,
-		 public navParams: NavParams,
-		 private _http: Http ) {
-		this.carro = this.navParams.get('carro');
-		this.precoTotal = this.navParams.get('precoTotal');
-	}
+    this._alerta = this._alertCtrl.create({
+      title: 'Aviso',
+      buttons: [{ text: 'Ok', handler: () => this.navCtrl.setRoot(HomePage)}]
+    });
+  }
 
-	agenda(){
-		this._http
-		.get(`https://aluracar.herokuapp.com/salvarpedido?carro=${this.carro.nome}&nome=${this.nome}&preco=${this.precoTotal}&endereco=${this.endereco}&email=${this.email}&dataAgendamento=${this.data}`)
-		.toPromise()
-		.then(() => alert('Sucesso'))
-		.catch(erro => alert('Falha'));
-	}
+  agenda() {
+
+    if(!this.agendamento.nome || !this.agendamento.endereco || !this.agendamento.email) {
+
+      this._alertCtrl.create({
+        title: 'Preenchimento obrigatório',
+        subTitle: 'Você deve preencher todas as informações',
+        buttons: [{ text: 'Ok'}]
+      }).present();
+
+      return;
+    }
+
+    this._service
+      .agenda(this.agendamento)
+      .then(() => {
+        this._alerta.setSubTitle('Agendamento realizado com sucesso!');
+        this._alerta.present();
+      })
+      .catch(err => {
+        console.log(err);
+        this._alerta.setSubTitle('Não foi possível realizar o agendamento. Tente mais tarde');
+        this._alerta.present();
+      });
+  }
 }

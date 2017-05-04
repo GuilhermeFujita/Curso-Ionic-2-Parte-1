@@ -7,12 +7,9 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-list>
-
+  <ion-list>
     <ion-item *ngFor="let carro of carros" (click)="seleciona(carro)">
-      {{carro.nome}}
+      {{ carro.nome }}
     </ion-item>
-
-
-    </ion-list>
+  </ion-list>
 </ion-content>
